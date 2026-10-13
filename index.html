@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pinforge: Pinterest pins and per-locale publishing order from Search Console</title>
+<meta name="description" content="A small Python package that builds 1000x1500 Pinterest pins and ranks what to publish first for each language of a multilingual site.">
+<style>
+body{max-width:720px;margin:40px auto;padding:0 16px;font:17px/1.6 system-ui,sans-serif;color:#1d1d1f;background:#fafafa}
+code,pre{background:#eee;border-radius:4px}pre{padding:12px;overflow-x:auto}code{padding:1px 4px}
+table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:4px 10px;text-align:left}
+a{color:#5b2bb5}
+</style>
+</head>
+<body>
+<h1>pinforge</h1>
+<p>A small Python package with two jobs: build vertical 1000×1500 Pinterest pins from an image and a few lines of text, and work out what to publish first from a Google Search Console export, counted separately for every language of a site.</p>
+<pre><code>pip install pinforge</code></pre>
+<p>Package page: <a href="https://pypi.org/project/pinforge/">pypi.org/project/pinforge</a></p>
+
+<h2>Why rank per locale</h2>
+<p>If a site has several language versions, demand in each one is different. Summing impressions across the whole site and reusing one order for every language sends the best material to the wrong audience.</p>
+<p>The package was written for <a href="https://tarot-magic.com/">Tarot Magic</a>, a tarot reference with the same 78 cards in four languages. The most-searched card in each language was a different card:</p>
+<table>
+<tr><th>Locale</th><th>Top card</th><th>Impressions</th></tr>
+<tr><td>Ukrainian</td><td>Six of Wands</td><td>308</td></tr>
+<tr><td>Russian</td><td>Ten of Cups</td><td>270</td></tr>
+<tr><td>English</td><td>Four of Wands</td><td>158</td></tr>
+<tr><td>French</td><td>The Magician</td><td>19</td></tr>
+</table>
+<p>Four different answers, not the same list in a different order.</p>
+
+<h2>Usage</h2>
+<pre><code>from pinforge import rank_by_locale
+
+queues = rank_by_locale(
+    "pages.csv",
+    item_pattern=r"/card/([^/?]+)$",
+    locales=("ru", "uk", "fr"),
+    default_locale="en",
+)
+for slug, impressions in queues["uk"][:5]:
+    print(slug, impressions)</code></pre>
+<p>It reads the CSV the way Search Console exports it, in any interface language: column names are detected, not hard-coded.</p>
+
+<h2>Live example</h2>
+<p>The card pins on the site's Pinterest boards come from the same code this package was extracted from. The card pages the pins point to are at <a href="https://tarot-magic.com/card-meanings">tarot-magic.com/card-meanings</a>.</p>
+</body>
+</html>
